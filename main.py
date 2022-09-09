@@ -9,40 +9,40 @@
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
-import pandas as pd
+# %%
+# Import other scripts
 import data as dt
+import functions as fn
+import visualizations as vz
 
-# -- TEST 1 : 
-# verify that the script is being read
-print(dt.dict_test)
+# %%
+# ---- Base
 
-# -- TEST 2 :
-# verify that installed pandas module works correctly
-df_dict_test = pd.DataFrame(dt.dict_test, index=[0, 1])
-print(df_dict_test)
+# Step 1 - Read all the files
+data_files = dt.data_files
 
-# -- TEST 3 :
-# verify you can use plotly and visualize plots in jupyter notebook
+# Step 2 - Get all the dates
+dates = fn.f_dates(p_files=dt.files)
 
-import chart_studio.plotly as py   # various tools (jupyter offline print)
-import plotly.graph_objects as go  # plotting engine
+# Display the first 5 dates in the 2 formats
+print(dates["i_dates"][0:4])
+print(dates["t_dates"][0:4])
+# %%
+# Step 3 - Get the tickers for the calculations
+global_tickers = fn.f_tickers(p_archivos=dt.files, p_data_archivos=data_files)
 
-# example data
-df = pd.DataFrame({'column_a': [1, 2, 3, 4, 5], 'column_b': [1, 2, 3, 4, 5]})
-# basic plotly plot
-data = [go.Bar(x=df['column_a'], y=df['column_b'])]
-# instruction to view it inside jupyter
-py.iplot(data, filename='jupyter-basic_bar')
-# (alternatively) instruction to view it in web app of plotly
-# py.plot(data)
+# Display global tickers
+print(global_tickers[0:4])
+# %%
+# ---- Historical Prices
+global_prices = fn.f_get_prices(p_tickers=global_tickers, p_fechas=dates["i_dates"])
+precios = global_prices["precios"]
 
-# -- TEST 4 :
-# verify you can use plotly and visualize plots in web browser locally
+# %%
+# DF pasivos
+df_pasiva_a = fn.tickin2(0, 25)
 
-import plotly.io as pio            # to define input-output of plots
-pio.renderers.default = "browser"  # to render the plot locally in your default web browser
+df_pasiva_b = fn.tickin4(25, 39)
 
-# basic plotly plot
-plot_data = go.Figure(go.Bar(x=df['column_a'], y=df['column_b']))
-# instruction to view it in specified render (in this case browser)
-plot_data.show()
+#%% DF activa
+df_activa = fn.tickin3(0,39)
